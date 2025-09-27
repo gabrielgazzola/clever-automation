@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 
 from login import System
+from main_menu import MainMenu
 from utils.selenium import init_driver
 
 def main():
@@ -14,10 +15,13 @@ def main():
 
     driver = init_driver()
     system = System(driver)
+    main_menu = MainMenu(driver)
 
     try:
         driver.get(url)
         system.login(user, password)
+
+        main_menu.go_to_neighborhood_page()
 
     except Exception as e:
         print(f"Ocorreu um erro {e}")
