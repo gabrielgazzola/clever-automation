@@ -1,12 +1,16 @@
+import pandas as pd
 import time
 import os
 from dotenv import load_dotenv
 
 from login import System
 from main_menu import MainMenu
+from neighborhood_page import NeighborhoodPage
 from utils.selenium import init_driver
 
 def main():
+    df = pd.read_csv("bairros.csv")
+
     load_dotenv()
     user = os.getenv("SYSTEM_USER")
     password = os.getenv("SYSTEM_PASSWORD")
@@ -16,12 +20,20 @@ def main():
     driver = init_driver()
     system = System(driver)
     main_menu = MainMenu(driver)
+    neighborhood_page = NeighborhoodPage(driver)
 
     try:
         driver.get(url)
         system.login(user, password)
 
         main_menu.go_to_neighborhood_page()
+
+        for row in df.itertuples():
+            neighborhood_page.add_new_neighborhood(
+                neighborhood=row.descricao,
+                price=row.valor_motoboy,
+                city=row.cidade
+            )
 
     except Exception as e:
         print(f"Ocorreu um erro {e}")
