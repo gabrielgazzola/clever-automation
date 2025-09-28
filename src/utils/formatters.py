@@ -1,25 +1,14 @@
-import locale
-
-try:
-    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
-except locale.Error:
-    print("Alerta: Locale 'pt_BR.UTF-8' não suportado. Usando o locale padrão do sistema.")
-
 def format_price(price):
     try:
-        if isinstance(price, (int, float)):
+        if isinstance(price, str):
+            numeric_price = float(price.strip().replace('.', '').replace(',', '.'))
+        else:
             numeric_price = float(price)
 
-        elif isinstance(price, str):
-            normalized_price = price.strip().replace('.', '').replace(',', '.')
-            if not normalized_price:
-                raise ValueError("String vazia não é um número válido")
-            numeric_price = float(normalized_price)
+        formatted_str = f"{numeric_price:,.2f}"
+        formatted_str = formatted_str.replace(',', '@').replace('.', ',').replace('@', '.')
 
-        else:
-            raise TypeError("Tipo de entrada não suportado")
-
-        return locale.currency(numeric_price, grouping=True)
+        return f"R$ {formatted_str}"
 
     except (ValueError, TypeError):
-        return locale.currency(0, grouping=True)
+        return "R$ 0,00"
