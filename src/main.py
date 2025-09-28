@@ -6,16 +6,23 @@ from dotenv import load_dotenv
 from login import System
 from main_menu import MainMenu
 from neighborhood_page import NeighborhoodPage
+from utils.path import resource_path
 from utils.selenium import init_driver
 
 def main():
     df = pd.read_csv("bairros.csv")
 
-    load_dotenv()
+    dotenv_path = resource_path('.env')
+    load_dotenv(dotenv_path=dotenv_path)
+
     user = os.getenv("SYSTEM_USER")
     password = os.getenv("SYSTEM_PASSWORD")
 
-    url = input("Digite a URL do sistema: ")
+    if not user or not password:
+        input("ERRO CRÍTICO: Não foi possível ler as credenciais. Pressione Enter para sair.")
+        return
+
+    url = input("Digite a URL do sistema do cliente: ")
 
     driver = init_driver()
     system = System(driver)
@@ -39,6 +46,7 @@ def main():
         print(f"Ocorreu um erro {e}")
 
     finally:
+        print("Automação finalizada.")
         time.sleep(5)
         driver.quit()
 
